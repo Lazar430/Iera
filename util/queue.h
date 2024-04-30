@@ -5,7 +5,7 @@
 
 typedef struct iera_queue iera_queue;
 
-void enqueue_process(process_type);
+iera_status enqueue_process(process_type);
 iera_i32 dequeue_process();
 void peek_process();
 

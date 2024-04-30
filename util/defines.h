@@ -49,4 +49,10 @@ typedef enum{
 #define IERA_WINDOW_WIDTH 1024
 #define IERA_WINDOW_HEIGHT 720
 
+#define IERA_TERMINAL_RED "\e[1;31m"
+#define IERA_TERMINAL_GREEN "\e[1;32m"
+#define IERA_TERMINAL_YELLOW "\e[1;33m"
+
+#define IERA_TERMINAL_RESET "\e[0m"
+
 #endif

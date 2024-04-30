@@ -20,8 +20,8 @@ void draw_gradient(){
   } 
 }
 
-void iera_push_process(process_type type){
-  enqueue_process(type);
+iera_status iera_push_process(process_type type){
+  return enqueue_process(type);
 }
 
 iera_u8 there_are_processes_to_be_executed(){

@@ -3,6 +3,7 @@
 #include "../iera.h"
 
 #include "process.h"
+#include "log.h"
 
 #include<stdio.h>
 #include<stdint.h>
@@ -22,11 +23,11 @@ struct iera_queue{
 
 static iera_queue* process_queue = NULL;
 
-void enqueue_process(process_type data){
+iera_status enqueue_process(process_type data){
   if(process_queue == NULL){
     if( (process_queue = malloc(sizeof(iera_queue))) == NULL ){
-      perror("could not allocate a queue dinamically");
-      exit(-1);
+      IERA_LOG(ERROR, "Could not allocate process queue. Aborting...");
+      return IERA_FAILURE;
     }
     process_queue->front = NULL;
     process_queue->rear = NULL;
@@ -34,8 +35,8 @@ void enqueue_process(process_type data){
   
   iera_node* temp;  
   if( (temp = malloc(sizeof(iera_node))) == NULL ){
-    perror("could not allocate a node dinamically");
-    exit(-1);
+    IERA_LOG(ERROR, "Could not allocate process data node. Aborting...");
+      return IERA_FAILURE;
   }
   
   temp->data = data;
@@ -47,6 +48,8 @@ void enqueue_process(process_type data){
     process_queue->rear->next = temp;
     process_queue->rear = temp;
   }
+
+  return IERA_SUCCESS;
 }
 
 iera_i32 dequeue_process(){
@@ -65,7 +68,7 @@ iera_i32 dequeue_process(){
     data = temp->data;
     free(temp);
   } else{
-    printf("Attempt to dequeue an empty queue.\n");
+    IERA_LOG(WARNING, "Attempt to dequeue an empty queue.");
   }
   
   return data;
@@ -97,7 +100,7 @@ void clear_queue(){
     }
     free(process_queue);
     } else{
-    printf("Attempt to clear empty queue.\n");
+    IERA_LOG(WARNING, "Attempt to clear an empty queue.");
   }
 }
     
@@ -114,6 +117,6 @@ void print_queue(){
       print_node(process_queue->front);
     }
   } else{
-    printf("Attempt to print empty queue.\n");
+    IERA_LOG(WARNING, "Attempt to print an empty queue.");
   } 
 }
