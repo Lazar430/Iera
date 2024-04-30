@@ -1,2 +1,6 @@
 build
 build.sh
+*eshell*
+#*eshell*#
+.#*eshell*
+#g#

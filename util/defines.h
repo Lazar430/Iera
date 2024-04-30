@@ -46,4 +46,7 @@ typedef enum{
   IERA_SUCCESS
 } iera_status;
 
+#define IERA_WINDOW_WIDTH 1024
+#define IERA_WINDOW_HEIGHT 720
+
 #endif
