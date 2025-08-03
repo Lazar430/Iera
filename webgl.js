@@ -1,6 +1,6 @@
-const get_shader_sources = () => {
-    const vert_src = document.getElementById("vert").textContent;
-    const frag_src = document.getElementById("frag").textContent;
+const get_shader_sources = (vert_id, frag_id) => {
+    const vert_src = document.getElementById(vert_id).textContent;
+    const frag_src = document.getElementById(frag_id).textContent;
     return { vert_src, frag_src };
 };
 
@@ -24,13 +24,13 @@ const compile_shaders = (gl, vert_src, frag_src) => {
     return { vert, frag };
 };
 
-const get_shaders = (gl) => {
-    const { vert_src, frag_src } = get_shader_sources();
+const get_shaders = (gl, vert_id, frag_id) => {
+    const { vert_src, frag_src } = get_shader_sources(vert_id, frag_id);
     return compile_shaders(gl, vert_src, frag_src);
 };
 
-const get_program = (gl) => {
-    const { vert, frag } = get_shaders(gl);
+const get_program = (gl, vert_id = "vert",  frag_id = "frag") => {
+    const { vert, frag } = get_shaders(gl, vert_id, frag_id);
 
     const program = gl.createProgram();
     gl.attachShader(program, vert);
