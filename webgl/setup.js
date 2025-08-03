@@ -19,8 +19,8 @@ const setup_attributes = (gl, program, FSIZE) => {
     gl.enableVertexAttribArray(color);
 };
 
-const setup_environment = (gl) => {
-    gl.clearColor(0, 0, 0, 1);
+const setup_environment = (gl, transparent) => {
+    gl.clearColor(0, 0, 0, transparent ? 0 : 1);
     gl.enable(gl.DEPTH_TEST);
 };
 
@@ -43,18 +43,18 @@ const setup_camera = (canvas) => {
     );
 
     // Orthographic projection for 2D (0,0 at bottom-left)
-    glMatrix.mat4.ortho(
-        camera.ortho,
-        0, canvas.width,
-        0, canvas.height,
-        -1, 1
-    );
+    const units = 10; // how many world units across the screen
+    const halfX = units * aspect / 2;
+    const halfY = units / 2;
+
+    glMatrix.mat4.ortho(camera.ortho, -halfX, halfX, -halfY, halfY, -1, 1);
+
 
     return camera;
 };
 
 const update_camera_view = (camera) => {
-    const radius = 5.0;
+    const radius = 10.0;
 
     const eye = [
         radius * Math.cos(elevation) * Math.sin(azimuth),

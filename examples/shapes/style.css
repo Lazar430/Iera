@@ -12,7 +12,7 @@ canvas {
 
 #canvas1 {
   position: absolute;
-  top: 120px;
+  top: 140px;
   left: 50px;
   border: 10px solid orange; /* Optional for visibility */
 }

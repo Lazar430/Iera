@@ -1,4 +1,4 @@
-function create_cube(center = [0, 0, 0], size = 2) {
+function create_cube({ center = [0, 0, 0], size = 2 } = {}) {
     const [cx, cy, cz] = center;
     const s = size / 2;
 
@@ -35,7 +35,7 @@ function create_cube(center = [0, 0, 0], size = 2) {
 }
 
 // pyramid.js
-function create_pyramid(center = [0, 0, 0], size = 2) {
+function create_pyramid({ center = [0, 0, 0], size = 2 } = {}) {
     const [cx, cy, cz] = center;
     const h = size;       // height
     const s = size / 2;   // half-base
@@ -78,8 +78,9 @@ function create_pyramid(center = [0, 0, 0], size = 2) {
     return { vertices_colors, indices };
 }
 
-function create_sphere(center, radius, lat_divisions = 64, lon_divisions = 64) {
+function create_sphere({ center = [0, 0, 0], size = 1, lat_divisions = 64, lon_divisions = 64 } = {}) {
     const [cx, cy, cz] = center;
+    const radius = size;
     const vertices_colors = [];
     const indices = [];
 
@@ -144,7 +145,7 @@ function create_sphere(center, radius, lat_divisions = 64, lon_divisions = 64) {
     };
 }
 
-function create_square(center, size = 1) {
+function create_square({ center, size = 1 } = {}) {
     [cx, cy] = center;
     const cz = 0;
     
@@ -176,7 +177,7 @@ function create_square(center, size = 1) {
     return { vertices_colors, indices };
 }
 
-function create_triangle(center, size) {
+function create_triangle({ center, size } = {}) {
     const [cx, cy] = center;
     const cz = 0;
 
@@ -191,7 +192,7 @@ function create_triangle(center, size) {
     return { vertices_colors, indices };
 }
 
-function create_circle(center, radius, divisions = 64){
+function create_circle({ center, size: radius, divisions = 64 } = {}){
     [cx, cy] = center;
     cz = 0;
 

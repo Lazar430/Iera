@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Iera</title>
 
-    <link rel = "stylesheet" type = "text/css" href = "style.css">
+    <link rel = "stylesheet" type = "text/css" href = "style/style.css">
   </head>
   <body>
     <canvas id="canvas1" width = "400" height = "400"></canvas>
@@ -12,8 +12,10 @@
     <canvas id="canvas2" width = "600" height = "600"></canvas>
 
     <canvas id="canvas3" width = "1000" height = "1000"></canvas>
+
+    <canvas id="canvas4" width = "900" height = "900"></canvas>
     
-    <script src="webgl.js"></script>
+    <script src="webgl/webgl.js"></script>
 
     <script id="vert" type="x-shader/x-vertex">
       attribute vec3 position;
@@ -38,8 +40,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix-min.js"></script>
 
-    <script src="setup.js"></script>
-    <script src="shapes.js"></script>
+    <script src="webgl/setup.js"></script>
+    <script src="primitives/shapes.js"></script>
+    <script src="primitives/plot.js"></script>
     <script src="renderer.js"></script>
     <script src="test.js"></script>
   </body>

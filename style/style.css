@@ -1,0 +1,39 @@
+/* Reset default page styling */
+body {
+  margin: 0;
+  background: #111; /* optional: dark background */
+}
+
+/* General canvas defaults */
+canvas {
+  display: block;
+  position: absolute;
+}
+
+#canvas1 {
+  position: absolute;
+  top: 1040px;
+  left: 50px;
+  border: 10px solid orange; /* Optional for visibility */
+}
+
+#canvas2 {
+  position: absolute;
+  top: 1050px;
+  left: 650px;
+  border: 10px solid cyan; /* Optional for visibility */
+}
+
+#canvas3 {
+  position: absolute;
+  top: 1850px;
+  left: 450px;
+  border: 10px solid purple; /* Optional for visibility */
+}
+
+#canvas4 {
+  position: absolute;
+  top: 5px;
+  left: 450px;
+  border: 10px solid green; /* Optional for visibility */
+}

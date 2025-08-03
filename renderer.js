@@ -1,5 +1,6 @@
-function create_renderer(canvas, vert_id = "vert", frag_id = "frag") {
-    const gl = canvas.getContext("webgl2");
+function create_renderer({ canvas, vert_id = "vert", frag_id = "frag", transparent = false }) {
+    const gl = canvas.getContext("webgl2", { alpha: transparent });
+
     if (!gl) throw new Error("WebGL2 not supported");
 
     const program = get_program(gl, vert_id, frag_id);
@@ -9,13 +10,16 @@ function create_renderer(canvas, vert_id = "vert", frag_id = "frag") {
     const cameraLoc = gl.getUniformLocation(program, 'camera');
 
     const shape_factories = {
-	cube:     { factory: create_cube,      space: "3D" },
-	pyramid:  { factory: create_pyramid,   space: "3D" },
-	sphere:   { factory: create_sphere,    space: "3D" },
+	cube:      { factory: create_cube,      space: "3D", mode: "triangles" },
+	pyramid:   { factory: create_pyramid,   space: "3D", mode: "triangles" },
+	sphere:    { factory: create_sphere,    space: "3D", mode: "triangles" },
 	
-	triangle: { factory: create_triangle,  space: "2D" },
-	square:   { factory: create_square,    space: "2D" },
-	circle:   { factory: create_circle,    space: "2D" },
+	triangle:  { factory: create_triangle,  space: "2D", mode: "triangles" },
+	square:    { factory: create_square,    space: "2D", mode: "triangles" },
+	circle:    { factory: create_circle,    space: "2D", mode: "triangles" },
+
+	axes_2d:   { factory: create_axes_2d,   space: "2D", mode: "lines" },
+	graph_2d:  { factory: create_graph_2d,  space: "2D", mode: "lines" }
     };
 
 
@@ -56,16 +60,21 @@ function create_renderer(canvas, vert_id = "vert", frag_id = "frag") {
         glMatrix.mat4.lookAt(camera.view, eye, [0, 0, 0], [0, 1, 0]);
     }
 
-    function add_shape(type, center, size) {
-	if (center.length === 2) {
-            center = [...center, 0];
+    function add_shape(type, options = {}) {
+	if(options.center != undefined){
+	    if (options.center.length === 2) {
+		options.center = [...options.center, 0];
+	    }
 	}
 	
 	const entry = shape_factories[type];
 	if (!entry) throw new Error(`Unknown shape type: ${type}`);
 	
-	const { factory, space } = entry;
-	const data = factory(center, size);
+	const { factory, space, mode } = entry;
+	const data = factory(options);
+
+	const center = options.center || [0, 0, 0];
+        const size = options.size || 1;
 
 	const vao = gl.createVertexArray();
 	gl.bindVertexArray(vao);
@@ -82,14 +91,14 @@ function create_renderer(canvas, vert_id = "vert", frag_id = "frag") {
 
 	setup_attributes(gl, program, FSIZE);
 
-	shapes.push({ center, size, vao, indices: data.indices, space });
+	shapes.push({ center, size, vao, indices: data.indices, space, mode });
     }
 
 
     function draw() {
         update_camera_view();
 
-        setup_environment(gl);
+        setup_environment(gl, transparent);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         for (const shape of shapes) {
@@ -116,7 +125,11 @@ function create_renderer(canvas, vert_id = "vert", frag_id = "frag") {
 		  ? gl.UNSIGNED_BYTE
 		  : gl.UNSIGNED_SHORT;
 
-	    gl.drawElements(gl.TRIANGLES, shape.indices.length, indexType, 0);
+	    const mode = shape.mode === "triangles"
+		  ? gl.TRIANGLES
+		  : gl.LINES;
+
+	    gl.drawElements(mode, shape.indices.length, indexType, 0);
         }
     }
     
