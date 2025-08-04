@@ -10,6 +10,13 @@ canvas {
   position: absolute;
 }
 
+#lights_out {
+  position: absolute;
+  top: 60px;
+  left: 350px;
+  border: 10px solid purple; /* Optional for visibility */
+}
+
 #canvas1 {
   position: absolute;
   top: 1040px;

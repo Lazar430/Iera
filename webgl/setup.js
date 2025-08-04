@@ -9,15 +9,25 @@ const setup_buffers = (gl, shape) => {
 };
 
 const setup_attributes = (gl, program, FSIZE) => {
-    const position = gl.getAttribLocation(program, "position");
-    const color = gl.getAttribLocation(program, "color");
+    const stride = FSIZE * 9;
 
-    gl.vertexAttribPointer(position, 3, gl.FLOAT, false, FSIZE * 6, 0);
+    const position = gl.getAttribLocation(program, "position");
+    const color    = gl.getAttribLocation(program, "color");
+    const normal   = gl.getAttribLocation(program, "normal");
+
+    // position: offset 0
+    gl.vertexAttribPointer(position, 3, gl.FLOAT, false, stride, 0);
     gl.enableVertexAttribArray(position);
 
-    gl.vertexAttribPointer(color, 3, gl.FLOAT, false, FSIZE * 6, FSIZE * 3);
+    // color: offset 3 floats
+    gl.vertexAttribPointer(color, 3, gl.FLOAT, false, stride, FSIZE * 3);
     gl.enableVertexAttribArray(color);
+
+    // normal: offset 6 floats
+    gl.vertexAttribPointer(normal, 3, gl.FLOAT, false, stride, FSIZE * 6);
+    gl.enableVertexAttribArray(normal);
 };
+
 
 const setup_environment = (gl, transparent) => {
     gl.clearColor(0, 0, 0, transparent ? 0 : 1);
@@ -29,6 +39,7 @@ const setup_camera = (canvas) => {
         projection: glMatrix.mat4.create(), // perspective (3D)
         ortho: glMatrix.mat4.create(),      // orthographic (2D)
         view: glMatrix.mat4.create(),
+	eye: glMatrix.vec3.fromValues(0, 0, 20)
     };
 
     const aspect = canvas.width / canvas.height;
@@ -51,16 +62,4 @@ const setup_camera = (canvas) => {
 
 
     return camera;
-};
-
-const update_camera_view = (camera) => {
-    const radius = 10.0;
-
-    const eye = [
-        radius * Math.cos(elevation) * Math.sin(azimuth),
-        radius * Math.sin(elevation),
-        radius * Math.cos(elevation) * Math.cos(azimuth)
-    ];
-
-    glMatrix.mat4.lookAt(camera.view, eye, [0, 0, 0], [0, 1, 0]);
 };

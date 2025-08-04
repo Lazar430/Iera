@@ -3,14 +3,14 @@ function create_cube({ center = [0, 0, 0], size = 2 } = {}) {
     const s = size / 2;
 
     const positions = [
-        [ cx + s, cy + s, cz + s ], // v0
-        [ cx - s, cy + s, cz + s ], // v1
-        [ cx - s, cy - s, cz + s ], // v2
-        [ cx + s, cy - s, cz + s ], // v3
-        [ cx + s, cy - s, cz - s ], // v4
-        [ cx + s, cy + s, cz - s ], // v5
-        [ cx - s, cy + s, cz - s ], // v6
-        [ cx - s, cy - s, cz - s ]  // v7
+        [ cx + s, cy + s, cz + s ],
+        [ cx - s, cy + s, cz + s ],
+        [ cx - s, cy - s, cz + s ],
+        [ cx + s, cy - s, cz + s ],
+        [ cx + s, cy - s, cz - s ],
+        [ cx + s, cy + s, cz - s ],
+        [ cx - s, cy + s, cz - s ],
+        [ cx - s, cy - s, cz - s ]
     ];
 
     const colors = [
@@ -18,8 +18,16 @@ function create_cube({ center = [0, 0, 0], size = 2 } = {}) {
         [0, 1, 0], [0, 1, 1], [0, 0, 1], [0, 0, 0]
     ];
 
-    const vertices_colors = new Float32Array(
-        positions.flatMap((pos, i) => [...pos, ...colors[i]])
+    const normals = [
+        [1, 1, 1], [-1, 1, 1], [-1, -1, 1], [1, -1, 1],
+        [1, -1, -1], [1, 1, -1], [-1, 1, -1], [-1, -1, -1]
+    ].map(n => {
+        const len = Math.hypot(...n);
+        return n.map(v => v / len);
+    });
+
+    const vertices = new Float32Array(
+        positions.flatMap((pos, i) => [...pos, ...colors[i], ...normals[i]])
     );
 
     const indices = new Uint8Array([
@@ -31,8 +39,9 @@ function create_cube({ center = [0, 0, 0], size = 2 } = {}) {
         4, 7, 6,   4, 6, 5
     ]);
 
-    return { vertices_colors, indices };
+    return { vertices, indices };
 }
+
 
 // pyramid.js
 function create_pyramid({ center = [0, 0, 0], size = 2 } = {}) {
@@ -59,8 +68,13 @@ function create_pyramid({ center = [0, 0, 0], size = 2 } = {}) {
         [1, 0, 1]   // magenta (apex)
     ];
 
-    const vertices_colors = new Float32Array(
-        positions.flatMap((pos, i) => [...pos, ...colors[i]])
+    const normals = [
+        [0, -1, 0], [0, -1, 0], [0, -1, 0], [0, -1, 0], // base
+        [0, 1, 0] // apex — rough, optional: per-face normals can be calculated
+    ];
+
+    const vertices = new Float32Array(
+        positions.flatMap((pos, i) => [...pos, ...colors[i], ...normals[i]])
     );
 
     const indices = new Uint8Array([
@@ -75,13 +89,13 @@ function create_pyramid({ center = [0, 0, 0], size = 2 } = {}) {
         3, 0, 4
     ]);
 
-    return { vertices_colors, indices };
+    return { vertices, indices };
 }
 
 function create_sphere({ center = [0, 0, 0], size = 1, lat_divisions = 64, lon_divisions = 64 } = {}) {
     const [cx, cy, cz] = center;
     const radius = size;
-    const vertices_colors = [];
+    const vertices = [];
     const indices = [];
 
     for (let lat = 0; lat <= lat_divisions; ++lat) {
@@ -107,11 +121,15 @@ function create_sphere({ center = [0, 0, 0], size = 1, lat_divisions = 64, lon_d
 	    const z = sin_theta * sin_phi;
 	    //y is given by the projection of the radius onto the y axis (cos)
             const y = cos_theta;
-            
 
-            vertices_colors.push(
+	    const r = 0;//(x + 1) / 2;
+            const g = 0;//(y + 1) / 2;
+            const b = 1;//(z + 1) / 2;
+
+            vertices.push(
                 cx + radius * x, cy + radius * y, cz + radius * z,
-                (x + 1) / 2, (y + 1) / 2, (z + 1) / 2
+                r, g, b,
+		x, y, z
             );
         }
     }
@@ -140,15 +158,14 @@ function create_sphere({ center = [0, 0, 0], size = 1, lat_divisions = 64, lon_d
     }
 
     return {
-        vertices_colors: new Float32Array(vertices_colors),
+        vertices: new Float32Array(vertices),
         indices: new Uint16Array(indices),
     };
 }
 
-function create_square({ center, size = 1 } = {}) {
-    [cx, cy] = center;
+function create_square({ center, size = 1, color } = {}) {
+    const [cx, cy] = center;
     const cz = 0;
-    
     const half = size / 2;
 
     const positions = [
@@ -158,15 +175,28 @@ function create_square({ center, size = 1 } = {}) {
         [cx - half, cy + half, cz], // top left
     ];
 
-    const colors = [
-        [1, 0, 0], // red
-        [0, 1, 0], // green
-        [0, 0, 1], // blue
-        [1, 1, 0], // yellow
+    const colors = color
+          ? Array(4).fill(color) // same color for all vertices
+          : [
+              [1, 0, 0], // red
+              [0, 1, 0], // green
+              [0, 0, 1], // blue
+              [1, 1, 0], // yellow
+          ];
+
+    const normals = [
+        [0, 0, 1], // all point "out of the screen"
+        [0, 0, 1],
+        [0, 0, 1],
+        [0, 0, 1],
     ];
 
-    const vertices_colors = new Float32Array(
-        positions.flatMap((pos, i) => [...pos, ...colors[i]])
+    const vertices = new Float32Array(
+        positions.flatMap((pos, i) => [
+            ...pos,        // 3 floats: x, y, z
+            ...colors[i],  // 3 floats: r, g, b
+            ...normals[i]  // 3 floats: nx, ny, nz
+        ])
     );
 
     const indices = new Uint8Array([
@@ -174,39 +204,57 @@ function create_square({ center, size = 1 } = {}) {
         2, 3, 0
     ]);
 
-    return { vertices_colors, indices };
+    return { vertices, indices };
 }
+
 
 function create_triangle({ center, size } = {}) {
     const [cx, cy] = center;
     const cz = 0;
 
-    const vertices_colors = new Float32Array([
-        cx, cy + size, cz,    1, 0, 0,
-        cx - size, cy - size, cz,    0, 1, 0,
-        cx + size, cy - size, cz,    0, 0, 1,
-    ]);
+    const positions = [
+        [cx, cy + size, cz],
+        [cx - size, cy - size, cz],
+        [cx + size, cy - size, cz],
+    ];
+
+    const colors = [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+    ];
+
+    const normals = [
+        [0, 0, 1],
+        [0, 0, 1],
+        [0, 0, 1],
+    ];
+
+    const vertices = new Float32Array(
+        positions.flatMap((pos, i) => [...pos, ...colors[i], ...normals[i]])
+    );
 
     const indices = new Uint8Array([0, 1, 2]);
 
-    return { vertices_colors, indices };
+    return { vertices, indices };
 }
+
 
 function create_circle({ center, size: radius, divisions = 64 } = {}){
     [cx, cy] = center;
     cz = 0;
 
-    const vertices_colors = [];
+    const vertices = [];
     const indices = [];
 
-    vertices_colors.push(cx, cy, cz, 1, 1, 1);
+    vertices.push(cx, cy, cz, 1, 1, 1, 0, 0, 1);
 
     for(let i = 0; i <= divisions; ++i){
 	const angle = 2 * Math.PI * (i / divisions);
 	x = cx + radius * Math.cos(angle);
 	y = cy + radius * Math.sin(angle);
 
-	vertices_colors.push(x, y, cz, Math.cos(angle), Math.sin(angle), 1);
+	vertices.push(x, y, cz, Math.cos(angle), Math.sin(angle), 1, 0, 0, 1);
 
 	if(i > 0){
 	    indices.push(0, i, i + 1);
@@ -214,7 +262,7 @@ function create_circle({ center, size: radius, divisions = 64 } = {}){
     }
 
     return {
-        vertices_colors: new Float32Array(vertices_colors),
+        vertices: new Float32Array(vertices),
         indices: new Uint8Array(indices),
     };
 }
