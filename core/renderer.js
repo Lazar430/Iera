@@ -74,7 +74,7 @@ function create_renderer({ canvas, vert_id = "vert", frag_id = "frag", transpare
     return {
 	add_shape,
 	enable_dragging,
-	update_shape_color: (index) => Iera_update_shape_color(gl, shapes, index),
+	toggle_shape_color: (index, color1, color2) => Iera_toggle_shape_color(gl, shapes, index, color1, color2),
 	draw,
     };
 

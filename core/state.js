@@ -1,6 +1,4 @@
-function Iera_update_shape_color(gl, shapes, shape_id) {
-    const color1 = [0.2, 0.6, 0.8];
-    const color2 = [0.1, 0.2, 0.8];
+function Iera_toggle_shape_color(gl, shapes, shape_id, color1, color2) {
 
     const shape = shapes.find(s => s.id === shape_id);
     if (!shape) return;

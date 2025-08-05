@@ -5,11 +5,14 @@ const renderer = create_renderer({
 });
 
 function light_neighborhood(i, j){
-    renderer.update_shape_color(`square_${5 * i + j}`);
-    if(i - 1 >= 0) { renderer.update_shape_color(`square_${5 * (i - 1) + j}`); }
-    if(i + 1 < 5) { renderer.update_shape_color(`square_${5 * (i + 1) + j}`); }
-    if(j - 1 >= 0) { renderer.update_shape_color(`square_${5 * i + (j - 1)}`); }
-    if(j + 1 < 5) { renderer.update_shape_color(`square_${5 * i + (j + 1)}`); }
+    const color1 = [0.2, 0.7, 0.65]; // Teal
+    const color2 = [0.9, 0.4, 0.5]; // Dusty rose
+    
+    renderer.toggle_shape_color(`square_${5 * i + j}`, color1, color2);
+    if(i - 1 >= 0) { renderer.toggle_shape_color(`square_${5 * (i - 1) + j}`, color1, color2); }
+    if(i + 1 < 5) { renderer.toggle_shape_color(`square_${5 * (i + 1) + j}`, color1, color2); }
+    if(j - 1 >= 0) { renderer.toggle_shape_color(`square_${5 * i + (j - 1)}`, color1, color2); }
+    if(j + 1 < 5) { renderer.toggle_shape_color(`square_${5 * i + (j + 1)}`, color1, color2); }
 }
 
 function generate_grid(x, y){
@@ -19,7 +22,7 @@ function generate_grid(x, y){
 	    renderer.add_shape("square", {
 		center: [x + i, y - j],
 		size: size,
-		color: [0.1, 0.2, 0.8],
+		color: [0.9, 0.4, 0.5],
 		clickable: true,
 		onclick: () => {
 		    light_neighborhood(i, j);

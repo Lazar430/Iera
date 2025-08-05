@@ -15,7 +15,6 @@
       attribute vec3 position;
       attribute vec3 color;
       attribute vec3 normal;
-      
       uniform mat4 camera;
 
       uniform vec3 light_pos;
@@ -71,20 +70,20 @@
 
       void main() {
 	  vec3 norm = normalize(v_normal);
-	  vec3 light_dir = normalize(light_pos - v_frag_pos);
+	  vec3 light_dir = normalize(v_normal);
 	  vec3 view_dir = normalize(view_pos - v_frag_pos);
 	  vec3 reflect_dir = reflect(-light_dir, norm);
 
-	  // Diffuse component
-	  float diff = max(dot(norm, light_dir), 0.0);
+          // Diffuse (we scale it down a bit)
+          float diff = max(dot(norm, light_dir), 0.0) * 0.6;
+
+          // Specular (also reduce intensity)
+          float spec_strength = 0.3;
+          float shininess = 16.0;
+          float spec = pow(max(dot(view_dir, reflect(-light_dir, norm)), 0.0), shininess);
+
+          vec3 final_color = v_color * diff + spec_strength * spec * light_color;
 	  
-	  // Specular component
-	  float spec_strength = 0.8;
-	  float shininess = 32.0;
-	  float spec = pow(max(dot(view_dir, reflect_dir), 0.0), shininess);
-
-	  vec3 final_color = (v_color * diff + spec_strength * spec * light_color);
-
 	  gl_FragColor = vec4(final_color, 1.0);
       }
     </script>
@@ -92,14 +91,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/gl-matrix@3.4.3/gl-matrix-min.js"></script>
 
-    <script src="webgl/setup.js"></script>
-    <script src="primitives/shapes.js"></script>
-    <script src="primitives/plot.js"></script>
-    <script src="core/draw.js"></script>
-    <script src="core/shape.js"></script>
-    <script src="core/control.js"></script>
-    <script src="core/state.js"></script>
-    <script src="core/renderer.js"></script>
+    <script src="Iera.js"></script>
     <script src="lights_out.js"></script>
   </body>
 </html>
