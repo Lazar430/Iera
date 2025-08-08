@@ -3,7 +3,7 @@ function create_renderer({ canvas, vert_id = "vert", frag_id = "frag", transpare
 
     if (!gl) throw new Error("WebGL2 not supported");
 
-    const program = get_program(gl, vert_id, frag_id);
+    const program = Iera_get_program(gl, vert_id, frag_id);
     gl.useProgram(program);
 
     const camera = setup_camera(canvas);
